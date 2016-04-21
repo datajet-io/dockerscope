@@ -88,8 +88,6 @@ func (i *Image) SetName(newName string) error {
 	if _, err := os.Stat(repoPath); os.IsNotExist(err) {
 
 		// if no repo file exists, create new repo file
-		fmt.Println("not existing")
-
 		l, err := i.latestLayer()
 
 		if err != nil {
@@ -111,8 +109,6 @@ func (i *Image) SetName(newName string) error {
 		}
 
 	} else {
-
-		fmt.Println("existing")
 
 		// modify existing repo file
 
@@ -162,7 +158,9 @@ func (i *Image) SetName(newName string) error {
 func (i *Image) latestLayer() (*Layer, error) {
 
 	if len(i.Layers) == 0 {
-		return nil, fmt.Errorf("Image has no layers")
+		if err := i.readLayers(); err != nil {
+			return nil, fmt.Errorf("Image has no layers")
+		}
 	}
 
 	sort.Sort(ByCreated(i.Layers))
